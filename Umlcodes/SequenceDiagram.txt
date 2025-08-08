@@ -1,0 +1,38 @@
+@startuml
+actor User
+participant "signup.html" as Frontend
+participant "signupController" as Controller
+participant "signService" as Service
+participant "signupDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Fill Signup Form
+Frontend -> Controller : POST /merchant/signup\n(Merchant data) merchentName,Email,Password,pancardNumber,phoneNumber  
+Controller -> Service : signUp(merchentName,Email,Password,pancardNumber,phoneNumber)
+Service -> DAO : saveMerchant(merchentName,Email,Password,pancardNumber,phoneNumber)
+
+alt User already exists
+    DAO -> DB : Check if user exists
+    DB --> DAO : User found
+    DAO --> Service : error: user exists
+    Service --> Controller : error: user exists
+    Controller --> Frontend : 409 Conflict\n"User already exists"
+    Frontend --> User : Show 'User already exists' message
+
+else Server error
+    DAO -> DB : INSERT INTO merchants
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Signup failed"
+    Frontend --> User : Show 'Server error' message
+
+else Success
+    DAO -> DB : INSERT INTO merchants
+    DB --> DAO : success
+    DAO --> Service : true
+    Service --> Controller : true
+    Controller -> Frontend : 200 OK\n"Signup successful"
+    Frontend -> User : Show success message
+end
+@enduml
