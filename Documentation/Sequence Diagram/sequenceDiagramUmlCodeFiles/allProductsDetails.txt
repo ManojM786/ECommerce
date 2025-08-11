@@ -1,0 +1,41 @@
+@startuml
+title Get All Products
+
+actor User
+participant "productList.html" as Frontend
+participant "productController" as Controller
+participant "productService" as Service
+participant "productDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Request product list
+Frontend -> Controller : GET /product/all
+Controller -> Service : getAllProducts()
+Service -> DAO : fetchAllProducts()
+
+alt Products Found
+    DAO -> DB : SELECT * FROM Product
+    DB -> DAO : Array of product data\n[\n  {productId, name, price, ...},\n  {...},\n  {...}\n]
+    DAO -> Service : product list
+    Service -> Controller : product list
+    Controller -> Frontend : 200 OK\nReturn product list
+    Frontend -> User : Display product list
+
+else No Products Found
+    DAO -> DB : SELECT * FROM Product
+    DB --> DAO : Empty result
+    DAO --> Service : error: no products
+    Service --> Controller : error: no products
+    Controller --> Frontend : 404 Not Found\n"No products available"
+    Frontend --> User : Show 'No products found' message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Product
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"retrieving products failed"
+    Frontend --> User : Show 'Server error' message
+
+end
+@enduml

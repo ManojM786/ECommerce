@@ -1,0 +1,41 @@
+@startuml
+title Get User Profile
+
+actor User
+participant "profile.html" as Frontend
+participant "userController" as Controller
+participant "userService" as Service
+participant "userDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Click "View Profile"
+Frontend -> Controller : GET /user/profile/{userId}
+Controller -> Service : getUserProfile(userId)
+Service -> DAO : fetchUserById(userId)
+
+alt User Found
+    DAO -> DB : SELECT * FROM Users WHERE userId = ?
+    DB --> DAO : {userId, username, role, email}
+    DAO --> Service : (user Email,user Name , role)
+    Service --> Controller : (user Email,user Name , role)
+    Controller --> Frontend : 200 OK\n{userId, username, role, email}
+    Frontend -> User : Display profile info
+
+else User Not Found
+    DAO -> DB : SELECT * FROM Users WHERE userId = ?
+    DB --> DAO : No match
+    DAO --> Service : error: user not found
+    Service --> Controller : error: user not found
+    Controller --> Frontend : 404 Not Found\n"User does not exist"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Users
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Could not retrieve profile"
+    Frontend --> User : Show error message
+
+end
+@enduml

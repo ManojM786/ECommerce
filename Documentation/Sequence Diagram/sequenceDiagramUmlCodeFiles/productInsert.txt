@@ -1,0 +1,33 @@
+@startuml
+title Product Insert 
+
+actor User
+participant "productAdd.html" as Frontend
+participant "productController" as Controller
+participant "productService" as Service
+participant "productDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Fill product Form
+Frontend -> Controller : POST /product/add\n(product data) productName,description,price,category,stockQuantity   
+Controller -> Service : addProduct(productName,description,price,category,stockQuantity)
+Service -> DAO : saveProduct(productName,description,price,category,stockQuantity)
+
+alt Success
+    DAO -> DB : INSERT INTO Product
+    DB -> DAO : success
+    DAO -> Service : true
+    Service -> Controller : true
+    Controller -> Frontend : 200 OK\n"product added successfully"
+    Frontend -> User : Show success message
+
+else Server Error
+    DAO -> DB : INSERT INTO merchants
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"adding product failed"
+    Frontend --> User : Show 'Server error' message
+    
+end
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+title Remove Item from Cart
+
+actor User
+participant "cart.html" as Frontend
+participant "cartController" as Controller
+participant "cartService" as Service
+participant "cartDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Click "Remove from Cart"\n(productId)
+Frontend -> Controller : DELETE /cart/remove\n{productId, userId}
+Controller -> Service : removeFromCart(productId, userId)
+Service -> DAO : deleteCartItem(productId, userId)
+
+alt Item Exists and Removed
+    DAO -> DB : DELETE FROM Cart\nWHERE productId AND userId
+    DB -> DAO : Success
+    DAO -> Service : Item removed
+    Service -> Controller : Success
+    Controller -> Frontend : 200 OK\n"Item removed from cart"
+    Frontend -> User : Show confirmation
+
+else Item Not Found
+    DAO -> DB : SELECT * FROM Cart\nWHERE productId AND userId
+    DB --> DAO : No such item
+    DAO --> Service : error: item not found
+    Service --> Controller : error: item not found
+    Controller --> Frontend : 404 Not Found\n"Item not in cart"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : DELETE FROM Cart
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Remove from cart failed"
+    Frontend --> User : Show error message
+
+end
+@enduml

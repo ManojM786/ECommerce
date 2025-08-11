@@ -1,0 +1,43 @@
+@startuml
+title Get Cart Details
+
+actor User
+participant "cart.html" as Frontend
+participant "cartController" as Controller
+participant "cartService" as Service
+participant "cartDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Open Cart Page
+Frontend -> Controller : GET /cart/details\n{userId}
+Controller -> Service : getCartDetails(userId)
+Service -> DAO : fetchCartItems(userId)
+
+alt Cart Has Items
+    DAO -> DB : SELECT * FROM Cart\nWHERE userId
+    DB -> DAO : Array of cart items\n[\n  {productId, quantity},\n  {...},\n  {...}\n]
+    DAO -> DB : SELECT * FROM Product\nWHERE productId IN (...)
+    DB -> DAO : Array of product details\n[\n  {productId, name, price, ...},\n  {...}\n]
+    DAO -> Service : Combined cart data\n[\n  {productId, name, price, quantity},\n  {...}\n]
+    Service -> Controller : Cart details
+    Controller -> Frontend : 200 OK\nReturn cart details
+    Frontend -> User : Display cart items
+
+else Cart Is Empty
+    DAO -> DB : SELECT * FROM Cart\nWHERE userId
+    DB --> DAO : Empty result
+    DAO --> Service : error: cart empty
+    Service --> Controller : error: cart empty
+    Controller --> Frontend : 404 Not Found\n"Cart is empty"
+    Frontend --> User : Show 'Cart is empty' message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Cart
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Failed to retrieve cart"
+    Frontend --> User : Show error message
+
+end
+@enduml

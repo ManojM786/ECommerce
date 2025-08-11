@@ -1,0 +1,41 @@
+@startuml
+title Get Product Details
+
+actor User
+participant "productDetails.html" as Frontend
+participant "productController" as Controller
+participant "productService" as Service
+participant "productDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Request product details (e.g., click on product)
+Frontend -> Controller : GET /product/details/{productId}
+Controller -> Service : getProductDetails(productId)
+Service -> DAO : fetchProductById(productId)
+
+alt Product Found
+    DAO -> DB : SELECT * FROM Product WHERE productId=?
+    DB -> DAO : product data
+    DAO -> Service : product data
+    Service -> Controller : product data
+    Controller -> Frontend : 200 OK\n(product details)
+    Frontend -> User : Display product details
+
+else Product Not Found
+    DAO -> DB : SELECT * FROM Product WHERE productId=?
+    DB --> DAO : No matching product
+    DAO --> Service : error: product not found
+    Service --> Controller : error: product not found
+    Controller --> Frontend : 404 Not Found\n"product does not exist"
+    Frontend --> User : Show 'Product not found' message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Product
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"retrieving product failed"
+    Frontend --> User : Show 'Server error' message
+
+end
+@enduml

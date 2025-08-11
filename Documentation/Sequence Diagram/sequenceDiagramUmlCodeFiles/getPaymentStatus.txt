@@ -1,0 +1,41 @@
+@startuml
+title Get Payment Status
+
+actor User
+participant "paymentStatus.html" as Frontend
+participant "PaymentController" as Controller
+participant "PaymentService" as Service
+participant "PaymentDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Check payment status
+Frontend -> Controller : GET /payment/status/{paymentId}
+Controller -> Service : getPaymentStatus(paymentId)
+Service -> DAO : fetchPaymentById(paymentId)
+
+alt Payment Found
+    DAO -> DB : SELECT * FROM Payments WHERE paymentId = ?
+    DB -> DAO : {paymentId, orderId, amount, paymentStatus, paymentDate}
+    DAO -> Service : payment data
+    Service -> Controller : payment data
+    Controller -> Frontend : 200 OK\n{paymentId, orderId, amount, paymentStatus, paymentDate}
+    Frontend -> User : Display payment status
+
+else Payment Not Found
+    DAO -> DB : SELECT * FROM Payments WHERE paymentId = ?
+    DB --> DAO : No match
+    DAO --> Service : error: payment not found
+    Service --> Controller : error: payment not found
+    Controller --> Frontend : 404 Not Found\n"Payment does not exist"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Payments
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Failed to retrieve payment"
+    Frontend --> User : Show error message
+
+end
+@enduml

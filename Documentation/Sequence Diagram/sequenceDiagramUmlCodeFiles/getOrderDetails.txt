@@ -1,0 +1,41 @@
+@startuml
+title Get Order Details
+
+actor User
+participant "orderDetails.html" as Frontend
+participant "OrderController" as Controller
+participant "OrderService" as Service
+participant "OrderDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : View order details
+Frontend -> Controller : GET /order/details/{orderId}
+Controller -> Service : getOrderDetails(orderId)
+Service -> DAO : fetchOrderById(orderId)
+
+alt Order Found
+    DAO -> DB : SELECT * FROM Orders WHERE orderId = ?
+    DB -> DAO : {orderId, userId, totalAmount, orderDate, status}
+    DAO -> Service : order data
+    Service -> Controller : order data
+    Controller -> Frontend : 200 OK\n{orderId, userId, totalAmount, orderDate, status}
+    Frontend -> User : Display order details
+
+else Order Not Found
+    DAO -> DB : SELECT * FROM Orders WHERE orderId = ?
+    DB --> DAO : No match
+    DAO --> Service : error: order not found
+    Service --> Controller : error: order not found
+    Controller --> Frontend : 404 Not Found\n"Order does not exist"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Orders
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Failed to retrieve order"
+    Frontend --> User : Show error message
+
+end
+@enduml

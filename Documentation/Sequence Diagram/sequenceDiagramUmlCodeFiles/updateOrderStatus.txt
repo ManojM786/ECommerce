@@ -1,0 +1,43 @@
+@startuml
+title Update Order Status
+
+actor Admin
+participant "orderManagement.html" as Frontend
+participant "OrderController" as Controller
+participant "OrderService" as Service
+participant "OrderDAO" as DAO
+participant "Database" as DB
+
+Admin -> Frontend : Change order status\n{orderId, status}
+Frontend -> Controller : PUT /order/status/{orderId}\nstatus
+Controller -> Service : updateOrderStatus(orderId, status)
+Service -> DAO : updateOrderStatus(orderId, status)
+
+alt Order Found and Updated
+    DAO -> DB : SELECT * FROM Orders WHERE orderId = ?
+    DB -> DAO : Order found
+    DAO -> DB : UPDATE Orders SET status = ? WHERE orderId = ?
+    DB -> DAO : Update success
+    DAO -> Service : true
+    Service -> Controller : true
+    Controller -> Frontend : 200 OK\n"Order status updated"
+    Frontend -> Admin : Show success message
+
+else Order Not Found
+    DAO -> DB : SELECT * FROM Orders WHERE orderId = ?
+    DB --> DAO : No match
+    DAO --> Service : error: order not found
+    Service --> Controller : error: order not found
+    Controller --> Frontend : 404 Not Found\n"Order does not exist"
+    Frontend --> Admin : Show error message
+
+else Server Error
+    DAO -> DB : UPDATE Orders
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Failed to update status"
+    Frontend --> Admin : Show error message
+
+end
+@enduml

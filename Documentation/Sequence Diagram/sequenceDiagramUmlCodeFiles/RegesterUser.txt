@@ -1,0 +1,41 @@
+@startuml
+title User Registration
+
+actor User
+participant "register.html" as Frontend
+participant "userController" as Controller
+participant "userService" as Service
+participant "userDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Fill registration form\n{username, password, role, email}
+Frontend -> Controller : POST /user/register\nusername, password, role, email
+Controller -> Service : registerUser(username, password, role, email)
+Service -> DAO : saveUser(username, encryptedPassword, role, email)
+
+alt User Already Exists
+    DAO -> DB : SELECT * FROM Users WHERE username OR email
+    DB --> DAO : User found
+    DAO --> Service : error: user exists
+    Service --> Controller : error: user exists
+    Controller --> Frontend : 409 Conflict\n"User already exists"
+    Frontend --> User : Show error message
+
+else Registration Success
+    DAO -> DB : INSERT INTO Users\n(userId, username, encryptedPassword, role, email)
+    DB -> DAO : Success
+    DAO -> Service : true
+    Service -> Controller : true
+    Controller -> Frontend : 200 OK\n"Registration successful"
+    Frontend -> User : Show success message
+
+else Server Error
+    DAO -> DB : INSERT INTO Users
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Registration failed"
+    Frontend --> User : Show error message
+
+end
+@enduml

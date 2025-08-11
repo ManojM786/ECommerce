@@ -1,0 +1,33 @@
+@startuml
+title Create Order
+
+actor User
+participant "checkout.html" as Frontend
+participant "OrderController" as Controller
+participant "OrderService" as Service
+participant "OrderDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Submit order\n{userId, totalAmount, orderDate, status}
+Frontend -> Controller : POST /order/create\nuserId, totalAmount, orderDate, status
+Controller -> Service : createOrder(userId, totalAmount, orderDate, status)
+Service -> DAO : insertOrder(userId, totalAmount, orderDate, status)
+
+alt Order Created Successfully
+    DAO -> DB : INSERT INTO Orders\n(userId, totalAmount, orderDate, status)
+    DB -> DAO : orderId
+    DAO -> Service : orderId
+    Service -> Controller : orderId
+    Controller -> Frontend : 200 OK\n"Order created"\n{orderId, userId, totalAmount, orderDate, status}
+    Frontend -> User : Show order confirmation
+
+else Server Error
+    DAO -> DB : INSERT INTO Orders
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Order creation failed"
+    Frontend --> User : Show error message
+
+end
+@enduml

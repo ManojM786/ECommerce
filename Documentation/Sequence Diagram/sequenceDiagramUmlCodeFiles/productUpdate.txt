@@ -1,0 +1,41 @@
+@startuml
+title Product Update
+
+actor User
+participant "productEdit.html" as Frontend
+participant "productController" as Controller
+participant "productService" as Service
+participant "productDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Fill product Edit Form
+Frontend -> Controller : PUT /product/update\n(productId,productName,description,price,category,stockQuantity)
+Controller -> Service : updateProduct(productId,productName,description,price,category,stockQuantity)
+Service -> DAO : saveupdatedProduct(productId,productName,description,price,category,stockQuantity)
+
+alt Success
+    DAO -> DB : UPDATE Product SET ... WHERE productId=?
+    DB -> DAO : success
+    DAO -> Service : true
+    Service -> Controller : true
+    Controller -> Frontend : 200 OK\n"product updated successfully"
+    Frontend -> User : Show success message
+
+else Product Not Found
+    DAO -> DB : UPDATE Product WHERE productId=?
+    DB --> DAO : No matching product
+    DAO --> Service : error: product not found
+    Service --> Controller : error: product not found
+    Controller --> Frontend : 404 Not Found\n"product does not exist"
+    Frontend --> User : Show 'Product not found' message
+
+else Server Error
+    DAO -> DB : UPDATE Product
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"updating product failed"
+    Frontend --> User : Show 'Server error' message
+
+end
+@enduml

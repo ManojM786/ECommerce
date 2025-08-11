@@ -1,0 +1,51 @@
+@startuml
+title Add Item to Cart
+
+actor User
+participant "productDetail.html" as Frontend
+participant "cartController" as Controller
+participant "cartService" as Service
+participant "cartDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Click "Add to Cart"\n(productId, quantity)
+Frontend -> Controller : POST /cart/add\n{productId, userId, quantity}
+Controller -> Service : addToCart(productId, userId, quantity)
+Service -> DAO : insertCartItem(productId, userId, quantity)
+
+alt Product Exists and Added
+    DAO -> DB : INSERT INTO Cart\nVALUES (productId, userId, quantity)
+    DB -> DAO : Success
+    DAO -> Service : Cart item added
+    Service -> Controller : Success
+    Controller -> Frontend : 200 OK\n"Item added to cart"
+    Frontend -> User : Show confirmation
+
+else Product Already in Cart
+    DAO -> DB : SELECT * FROM Cart\nWHERE productId AND userId
+    DB -> DAO : Found existing item
+    DAO -> DB : UPDATE Cart SET quantity = quantity + newQuantity
+    DB -> DAO : Success
+    DAO -> Service : Quantity updated
+    Service -> Controller : Success
+    Controller -> Frontend : 200 OK\n"Cart updated"
+    Frontend -> User : Show updated quantity
+
+else Product Not Found
+    DAO -> DB : SELECT * FROM Product\nWHERE productId
+    DB --> DAO : No such product
+    DAO --> Service : error: product not found
+    Service --> Controller : error: product not found
+    Controller --> Frontend : 404 Not Found\n"Product does not exist"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : INSERT INTO Cart
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Add to cart failed"
+    Frontend --> User : Show error message
+
+end
+@enduml

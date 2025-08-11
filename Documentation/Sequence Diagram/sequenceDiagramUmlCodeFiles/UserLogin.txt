@@ -1,0 +1,41 @@
+@startuml
+title User Login
+
+actor User
+participant "login.html" as Frontend
+participant "userController" as Controller
+participant "userService" as Service
+participant "userDAO" as DAO
+participant "Database" as DB
+
+User -> Frontend : Enter credentials\n{username, password}
+Frontend -> Controller : POST /user/login\n{username, password}
+Controller -> Service : loginUser(username, password)
+Service -> DAO : fetchUserByUsername(username)
+
+alt User Found and Password Matches
+    DAO -> DB : SELECT * FROM Users WHERE username
+    DB -> DAO : {userId, username, encryptedPassword, role, email}
+    DAO -> Service : user data
+    Service -> Controller : user data
+    Controller -> Frontend : 200 OK\n"Login successful"(user Data)
+    Frontend -> User : Redirect to dashboard
+
+else Invalid Credentials
+    DAO -> DB : SELECT * FROM Users WHERE username
+    DB --> DAO : No match or password mismatch
+    DAO --> Service : error: invalid credentials
+    Service --> Controller : error: invalid credentials
+    Controller --> Frontend : 401 Unauthorized\n"Invalid username or password"
+    Frontend --> User : Show error message
+
+else Server Error
+    DAO -> DB : SELECT * FROM Users
+    DB --> DAO : DB error
+    DAO --> Service : error: server issue
+    Service --> Controller : error: server issue
+    Controller --> Frontend : 500 Internal Server Error\n"Login failed"
+    Frontend --> User : Show error message
+
+end
+@enduml
