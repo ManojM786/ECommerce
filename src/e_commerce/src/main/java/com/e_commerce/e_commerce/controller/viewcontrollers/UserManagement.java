@@ -8,13 +8,11 @@ public class UserManagement {
 
     @RequestMapping("/")
     public String getHomePage(){
-
         return "index";
     }
 
     @RequestMapping("login")
     public String getLoginPage(){
-
         return "login";
     }
 }
