@@ -6,9 +6,10 @@
             <div class="login-box shadow-lg p-4 min-w-320 w-50">
                 <h2 class="text-center mb-4">Sign Up</h2>
 
-                <p th:if="${message}" th:text="${message}" class="alert alert-info text-center"></p>
+                <p id="errMessage" class="alert alert-danger text-center"></p>
+                <p id="succMessage" class="alert alert-info text-center"></p>
 
-                <form th:action="@{/signin}" method="post">
+                <form>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" id="username" name="userName" class="form-control" placeholder="Enter username" required>

@@ -10,8 +10,7 @@
                 <div class="form-section w-50 p-4">
                     <h2 class="text-center mb-4">Login</h2>
 
-                    <p th:if="${message}" th:text="${message}" class="alert alert-info text-center"></p>
-                    <p th:if="${errMessage}" th:text="${errMessage}" class="alert alert-danger text-center"></p>
+                    <p id="credentials" class="alert alert-danger text-center"></p>
 
                     <form th:action="@{/login}" method="post">
                         <div class="mb-3">
@@ -39,5 +38,7 @@
         </div>
     </div>
 </div>
+
+
 
 </html>

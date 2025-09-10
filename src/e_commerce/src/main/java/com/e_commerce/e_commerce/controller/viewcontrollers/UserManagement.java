@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class UserManagement {
 
-    @RequestMapping("/")
+    @RequestMapping({"/","/home"})
     public String getHomePage(){
         return "index";
     }
@@ -14,5 +14,10 @@ public class UserManagement {
     @RequestMapping("login")
     public String getLoginPage(){
         return "login";
+    }
+
+    @RequestMapping("signin")
+    public String getSignPage(){
+        return "signin";
     }
 }

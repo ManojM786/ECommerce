@@ -17,4 +17,40 @@
     <div th:replace="fragments/footer :: footer"></div>
 </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        $(document).ready(function () {
+        if ($('#credentials').is(':empty')) {
+            $('#credentials').hide();
+        }
+
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+
+            const email = $('#username').val();
+            const password = $('#password').val();
+            const checkAdmin = $('#adminCheck')[0].checked;
+            const role = checkAdmin ? "ADMIN" : "CUSTOMER";
+
+            $.ajax({
+                url: '/api/login',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    email: email,
+                    password: password,
+                    user_role: role
+                }),
+                success: function (response) {
+                    window.location = '/';
+                },
+                error: function (response) {
+                    console.log(response);
+                    const errorMsg = response.responseJSON?.apiResponseMessage || "Login failed. Please try again.";
+                    $('#credentials').text(errorMsg).show(); // Show the alert box with the error
+                }
+            });
+        });
+    });
+</script>
 </html>
