@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.context.annotation.Scope;
 
+import java.util.List;
+
 @Entity
 @Scope("prototype")
 @Table(name = "user_data",
@@ -26,6 +28,10 @@ public class UserData {
     @JsonProperty("password")
     @Column(name = "password")
     private String passWord;
+
+    @Transient
+    @OneToMany(mappedBy = "userData")
+    private List<OrderDetails> orders;
 
 
     @JsonProperty("user_role")
