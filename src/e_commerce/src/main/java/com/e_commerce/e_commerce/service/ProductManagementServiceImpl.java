@@ -34,6 +34,6 @@ public class ProductManagementServiceImpl implements ProductManagementService{
 
     @Override
     public boolean deleteProduct(Long id) {
-
+        return false;
     }
 }

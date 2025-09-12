@@ -14,11 +14,8 @@ import java.util.List;
 
 @RestController
 public class ProductManagementRest {
-
     @Autowired
     ProductManagementServiceImpl productService;
-
-
     @GetMapping("/products")
     public ResponseEntity<ApiReturnData> getProducts(){
         List<Product> products =  productService.getAllProducts();
@@ -33,6 +30,4 @@ public class ProductManagementRest {
         apiReturnData.setApiResponseMessage("Products Fetched Successfully");
         return ResponseEntity.ok().body(apiReturnData);
     }
-
-
 }
