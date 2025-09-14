@@ -1,0 +1,98 @@
+:root {
+    --primary-color: #0f4c75;
+    --secondary-color: #3282b8;
+    --dark-bg-color: #2c3e50;
+    --light-bg-color: #e9ecef;
+    --card-bg-color: #ffffff;
+    --text-color: #333;
+    --light-text-color: #c9e2f0;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--light-bg-color);
+    color: var(--text-color);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Layout */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content-main {
+    flex-grow: 1;
+    padding: 20px;
+    margin-top: 75px;
+    transition: margin-left var(--transition-speed) ease;
+}
+
+/* Navbar Component */
+.navbar {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0.75rem 1.5rem;
+    transition: background var(--transition-speed) ease;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--light-text-color) !important;
+    transition: color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Card Component */
+.card {
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    border: none;
+    background-color: var(--card-bg-color);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-header {
+    background-color: var(--card-bg-color);
+    border-bottom: 1px solid var(--light-bg-color);
+    font-weight: 600;
+}
+
+/* Button Component */
+.btn {
+    font-weight: 600;
+    border-radius: 50px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+.btn-info { background-color: var(--info-color); border-color: var(--info-color); color: white; }
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}

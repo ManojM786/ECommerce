@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="loginComponent">
+    <div class="container-fluid outer-container">
+        <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <div class="login-box d-flex shadow-lg">
+                <img th:src="@{/static_files/images/online-shopping-banner-mobile-app-templates-concept-flat-design.png}"
+                     class="img-fluid w-50 rounded-start image" alt="Login Banner">
+
+                <div class="form-section w-50 p-4">
+                    <h2 class="text-center mb-4">Login</h2>
+
+                    <div th:if="${param.error}" class="alert alert-danger text-center">
+                        Invalid username or password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-info text-center">
+                        You have been logged out.
+                    </div>
+
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">User Email</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+
+                    <p class="text-center mt-3">
+                        New user? <a th:href="@{/signup}">Sign Up here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="signinComponent">
+    <div class="container-fluid outer-container">
+        <div class="container mt-5 d-flex justify-content-center align-items-center min-vh-100">
+            <div class="login-box shadow-lg p-4 min-w-320 w-50">
+                <h2 class="text-center mb-4">Sign Up</h2>
+
+                <p th:if="${message}" th:text="${message}" class="alert alert-info text-center"></p>
+
+                <form th:action="@{/api/signup}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" name="userName" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="passWord" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select id="role" name="userRole" class="form-select" required>
+                            <option value="">Select role</option>
+                            <option value="CUSTOMER">Customer</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+
+                <p class="text-center mt-3">
+                    Already have an account? <a th:href="@{/login}">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

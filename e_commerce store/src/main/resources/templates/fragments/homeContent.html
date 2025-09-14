@@ -1,0 +1,53 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <div th:fragment="content">
+        <h3 th:if="${user != null}" th:text="'Welcome, ' + ${user.userName} + '!'"></h3>
+        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img th:src="@{/static_files/images/carousal-1.jpg}" class="d-block w-100" alt="First slide">
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/static_files/images/carousal-2.jpg}" class="d-block w-100" alt="Second slide">
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/static_files/images/carousal-3.jpg}" class="d-block w-100" alt="Third slide">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <div th:if="${categorizedProducts.isEmpty()}" class="text-center py-5">
+        <h3>No products to display.</h3>
+        <p>Check back later or contact support if you believe this is an error.</p>
+    </div>
+
+    <div class="category" th:each="entry : ${categorizedProducts}">
+        <p class="category-title" th:text="'Best in ' + ${entry.key}">Category Title</p>
+        <div class="display-products">
+            <div class="product-card" th:each="product : ${entry.value}">
+                <a th:href="@{/product/{id}(id=${product.productId})}">
+                    <img th:src="@{${product.imageUrl}}" th:alt="${product.name}" style="height: 180px; object-fit: cover;">
+                </a>
+                <div class="product-details">
+                    <a th:href="@{/product/{id}(id=${product.productId})}" style="text-decoration: none; color: inherit;">
+                        <div class="product-title" th:text="${product.name}">Product Title</div>
+                    </a>
+                    <p class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$250</p>
+                    <div class="product-actions">
+                        <form th:action="@{/cart/add}" method="post" style="flex-grow: 1;">
+                            <input type="hidden" name="productId" th:value="${product.productId}" />
+                            <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</html>

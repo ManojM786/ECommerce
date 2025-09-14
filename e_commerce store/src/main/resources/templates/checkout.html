@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" th:href="@{/styles/index.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <style>
+        .summary-card { border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f8f9fa; }
+        .payment-form { background-color: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+<div class="container-fluid outer-container">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Checkout</h2>
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <div class="card summary-card sticky-lg-top">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-4">Order Summary</h5>
+                        <div th:each="item : ${order.orderItems}" class="d-flex justify-content-between mb-2">
+                            <span th:text="${item.product.name} + ' x' + ${item.quantity}">Product Name x1</span>
+                            <span th:text="'$' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">$99.99</span>
+                        </div>
+                        <hr>
+                        <p class="card-text d-flex justify-content-between">Subtotal: <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$999.99</span></p>
+                        <p class="card-text d-flex justify-content-between">Shipping: <span th:text="'$' + ${#numbers.formatDecimal(shipping, 1, 2)}">$50.00</span></p>
+                        <hr>
+                        <h5 class="d-flex justify-content-between">Total: <span th:text="'$' + ${#numbers.formatDecimal(total, 1, 2)}">$1049.99</span></h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Gateway Simulation -->
+            <div class="col-lg-7">
+                <div class="payment-form">
+                    <h4 class="mb-4">Simulated Payment Gateway</h4>
+                    <p>In a real application, this would be an integration with a payment provider like Stripe or PayPal. For now, click "Pay Now" to simulate a successful payment.</p>
+                    <form th:action="@{/order/place}" method="post">
+                        <input type="hidden" name="orderId" th:value="${order.orderId}" />
+                        <!-- Fake credit card form for visual effect -->
+                        <div class="mb-3">
+                            <label for="cardName" class="form-label">Name on Card</label>
+                            <input type="text" id="cardName" class="form-control" value="John Doe" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" id="cardNumber" class="form-control" value="**** **** **** 1234" readonly>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="expiry" class="form-label">Expiry</label>
+                                <input type="text" id="expiry" class="form-control" value="12/28" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" id="cvv" class="form-control" value="***" readonly>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-3 py-2 fs-5">
+                            <i class="fas fa-lock me-2"></i> Pay Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>
