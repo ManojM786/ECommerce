@@ -8,27 +8,29 @@
 
                 <p th:if="${message}" th:text="${message}" class="alert alert-info text-center"></p>
 
-                <form th:action="@{/api/signup}" method="post">
+                <form th:action="@{/api/signup}" th:object="${userData}" method="post">
+                    <div th:if="${#fields.hasErrors()}" class="alert alert-danger">
+                        Please fix the errors below.
+                    </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" id="username" name="userName" class="form-control" placeholder="Enter username" required>
+                        <input type="text" id="username" th:field="*{userName}" class="form-control"
+                            placeholder="Enter username" required maxlength="50">
+                        <div class="text-danger" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Enter email"
+                            required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="passWord" class="form-control" placeholder="Enter password" required>
+                        <input type="password" id="password" th:field="*{passWord}" class="form-control"
+                            placeholder="Enter password" required minlength="6">
+                        <div class="text-danger" th:if="${#fields.hasErrors('passWord')}" th:errors="*{passWord}"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select id="role" name="userRole" class="form-select" required>
-                            <option value="">Select role</option>
-                            <option value="CUSTOMER">Customer</option>
-                            <option value="ADMIN">Admin</option>
-                        </select>
-                    </div>
+                    <input type="hidden" th:field="*{userRole}" value="CUSTOMER" />
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary">Sign Up</button>
                     </div>

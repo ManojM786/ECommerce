@@ -15,6 +15,9 @@ public class UserManagementService {
     private PasswordEncoder passwordEncoder;
 
     public void registerUser(UserData user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("User already exists with this email");
+        }
         String encodedPassword = passwordEncoder.encode(user.getPassWord());
         user.setPassWord(encodedPassword);
         userRepository.save(user);

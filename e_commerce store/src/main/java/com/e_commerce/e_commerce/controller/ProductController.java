@@ -8,9 +8,11 @@ import com.e_commerce.e_commerce.service.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +37,12 @@ public class ProductController {
         return "product-form";
     }
     @PostMapping("/save")
-    public String saveProduct(@ModelAttribute Product product, @RequestParam("imageFile") MultipartFile imageFile) {
+    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult, @RequestParam("imageFile") MultipartFile imageFile, Model model) {
+        if (bindingResult.hasErrors()) {
+            List<Category> categories = categoryService.getAllCategories();
+            model.addAttribute("categories", categories);
+            return "product-form";
+        }
         try {
             if (!imageFile.isEmpty()) {
                 String imagePath = ((ProductServiceImpl) productService).saveImage(imageFile);
