@@ -1,4 +1,4 @@
-package com.e_commerce.e_commerce.controller.viewcontrollers;
+package com.e_commerce.e_commerce.controller;
 
 import com.e_commerce.e_commerce.model.Product;
 import com.e_commerce.e_commerce.service.ProductService;
@@ -29,4 +29,5 @@ public class UserProductController {
         model.addAttribute("searchQuery", query);
         return "productsList";
     }
+
 }

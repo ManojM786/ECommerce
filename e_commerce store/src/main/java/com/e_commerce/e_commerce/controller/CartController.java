@@ -1,4 +1,4 @@
-package com.e_commerce.e_commerce.controller.viewcontrollers;
+package com.e_commerce.e_commerce.controller;
 
 import com.e_commerce.e_commerce.model.Cart;
 import com.e_commerce.e_commerce.model.UserData;
@@ -40,7 +40,7 @@ public class CartController {
         double subtotal = cartItems.stream()
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
-        double shipping = subtotal > 0 ? 50.0 : 0.0;
+        double shipping = subtotal < 50 ? 10 : 0.0;
         double total = subtotal + shipping;
 
         model.addAttribute("cartItems", cartItems);

@@ -1,4 +1,4 @@
-package com.e_commerce.e_commerce.controller.viewcontrollers;
+package com.e_commerce.e_commerce.controller;
 
 import com.e_commerce.e_commerce.model.OrderDetails;
 import com.e_commerce.e_commerce.model.UserData;
@@ -37,7 +37,7 @@ public class OrderController {
     public String checkout(Model model) {
         try {
             OrderDetails order = orderService.createOrderFromCart(getCurrentUser());
-            double shipping = order.getTotalAmount() > 0 ? 50.0 : 0.0;
+            double shipping = order.getTotalAmount() < 50 ? 10.0 : 0.0;
             model.addAttribute("order", order);
             model.addAttribute("shipping", shipping);
             model.addAttribute("total", order.getTotalAmount() + shipping);
@@ -48,9 +48,17 @@ public class OrderController {
     }
 
     @PostMapping("/order/place")
-    public String placeOrder(@RequestParam("orderId") Integer orderId) {
-        orderService.processPaymentAndFinalizeOrder(orderId);
-        return "redirect:/order/confirmation?orderId=" + orderId;
+    public String placeOrder(@RequestParam("orderId") Integer orderId, Model model) {
+        try {
+            orderService.processPaymentAndFinalizeOrder(orderId);
+            return "redirect:/order/confirmation?orderId=" + orderId;
+        } catch (IllegalStateException e) {
+            // Payment not successful or other error
+            model.addAttribute("errorMessage", e.getMessage());
+            OrderDetails order = orderService.findOrderById(orderId);
+            model.addAttribute("order", order);
+            return "order-confirmation";
+        }
     }
 
     @GetMapping("/order/confirmation")

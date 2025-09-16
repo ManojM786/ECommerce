@@ -36,17 +36,14 @@
                 </div>
             </div>
 
-            <!-- Payment Gateway Simulation -->
             <div class="col-lg-7">
                 <div class="payment-form">
-                    <h4 class="mb-4">Simulated Payment Gateway</h4>
-                    <p>In a real application, this would be an integration with a payment provider like Stripe or PayPal. For now, click "Pay Now" to simulate a successful payment.</p>
+                    <h4 class="mb-4">Payment Gateway</h4>
                     <form th:action="@{/order/place}" method="post">
                         <input type="hidden" name="orderId" th:value="${order.orderId}" />
-                        <!-- Fake credit card form for visual effect -->
                         <div class="mb-3">
                             <label for="cardName" class="form-label">Name on Card</label>
-                            <input type="text" id="cardName" class="form-control" value="John Doe" readonly>
+                            <input type="text" id="cardName" class="form-control" value="David Joshua" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="cardNumber" class="form-label">Card Number</label>

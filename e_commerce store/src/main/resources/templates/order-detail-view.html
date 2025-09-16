@@ -73,6 +73,11 @@
                                     <span>Total:</span>
                                     <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount + 50.0, 1, 2)}"></span>
                                 </div>
+                                <div class="text-center mt-3">
+                                    <a th:href="@{/payment/status(orderId=${order.orderId})}" class="btn btn-info">
+                                        <i class="fas fa-credit-card"></i> View Payment Status
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,7 +86,6 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
 </body>
 </html>

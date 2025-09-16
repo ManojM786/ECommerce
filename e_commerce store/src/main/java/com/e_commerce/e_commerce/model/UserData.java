@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.context.annotation.Scope;
 
 import java.util.List;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Scope("prototype")
@@ -20,11 +24,16 @@ public class UserData {
     @Column(name = "user_id")
     private int userId;
 
+    @NotBlank(message = "Username is required")
+    @Size(max = 50, message = "Username must be at most 50 characters")
     @JsonProperty("user_name")
     @Column(name = "user_name")
     private String userName;
 
-
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Pattern(regexp = ".*[A-Za-z].*", message = "Password must contain at least one letter")
+    @Pattern(regexp = ".*\\d.*", message = "Password must contain at least one number")
     @JsonProperty("password")
     @Column(name = "password")
     private String passWord;
@@ -39,6 +48,8 @@ public class UserData {
     @Column(name = "user_role")
     private Role userRole;
 
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     @JsonProperty("email")
     @Column(name = "email")
     private String email;

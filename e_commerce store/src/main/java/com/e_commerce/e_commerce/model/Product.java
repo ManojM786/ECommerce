@@ -1,6 +1,8 @@
 package com.e_commerce.e_commerce.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "product")
@@ -10,9 +12,13 @@ public class Product {
     @Column(name = "product_id")
     private Long productId;
 
+    @NotBlank(message = "Product name is required")
+    @Size(max = 100, message = "Product name must be at most 100 characters")
     @Column(name = "name")
     private String name;
 
+    @NotBlank(message = "Description is required")
+    @Size(max = 250, message = "Description must be at most 250 characters")
     @Column(name = "description")
     private String description;
 
@@ -22,6 +28,8 @@ public class Product {
     @Column(name = "stock_quantity")
     private int stockQuantity;
 
+    @NotBlank(message = "Brand is required")
+    @Size(max = 100, message = "Brand must be at most 100 characters")
     @Column(name = "brand")
     private String brand;
 

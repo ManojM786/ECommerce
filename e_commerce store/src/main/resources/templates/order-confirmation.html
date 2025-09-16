@@ -15,7 +15,9 @@
         <div class="py-5">
             <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
             <h1 class="mt-3">Thank You For Your Order!</h1>
-            <p class="lead">Your order has been placed successfully.</p>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+            <p class="lead" th:unless="${errorMessage}">Your order has been placed successfully.</p>
+            <p class="lead text-danger" th:if="${errorMessage}">Your order could not be placed.</p>
             <p>Order ID: <strong th:text="${order.orderId}">#12345</strong></p>
             <p>An email confirmation has been sent to you.</p>
             <div class="mt-4">
