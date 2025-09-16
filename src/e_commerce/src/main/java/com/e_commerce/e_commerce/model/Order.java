@@ -22,6 +22,7 @@ public class Order {
 
     @JsonProperty("status")
     @Column(name="status")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @JsonProperty("user")

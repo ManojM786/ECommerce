@@ -14,7 +14,6 @@ public class Category {
     @Column(name = "name")
     private String name;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

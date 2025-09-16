@@ -8,8 +8,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <div class="w-100 d-flex justify-content-center">
-            <form class="d-flex w-100" role="search">
-              <input class="form-control me-2 search-bar"  type="search" placeholder="Search for products" aria-label="Search"/>
+            <form class="d-flex w-100" role="search" th:action="@{/products/search}" method="get">
+              <input class="form-control me-2 search-bar"  type="search" name="query" placeholder="Search for products" aria-label="Search"/>
               <button class="btn btn-outline-success" type="submit">
                 <i class="fa-solid fa-magnifying-glass"></i></button>
             </form>

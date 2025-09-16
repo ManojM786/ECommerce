@@ -14,19 +14,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/cart")
 public class CartController {
-
     @Autowired
     private CartService cartService;
-
     @Autowired
     private UserManagementDAO userManagementDAO;
-
     private UserData getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
@@ -54,8 +52,11 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public String addToCart(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", defaultValue = "1") int quantity) {
-        cartService.addToCart(getCurrentUser(), productId, quantity);
+    public String addToCart(@RequestParam("productId") Long productId,
+                            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+                            RedirectAttributes redirectAttributes) {
+        String message = cartService.addToCart(getCurrentUser(), productId, quantity);
+        redirectAttributes.addFlashAttribute("cartMessage", message);
         return "redirect:/cart";
     }
 
@@ -66,8 +67,11 @@ public class CartController {
     }
 
     @PostMapping("/update")
-    public String updateCartQuantity(@RequestParam("cartId") Integer cartId, @RequestParam("quantity") int quantity) {
-        cartService.updateItemQuantity(cartId, quantity);
+    public String updateCartQuantity(@RequestParam("cartId") Integer cartId,
+                                     @RequestParam("quantity") int quantity,
+                                     RedirectAttributes redirectAttributes) {
+        String message = cartService.updateItemQuantity(cartId, quantity);
+        redirectAttributes.addFlashAttribute("cartMessage", message);
         return "redirect:/cart";
     }
 }

@@ -43,7 +43,6 @@ public class OrderController {
             model.addAttribute("total", order.getTotalAmount() + shipping);
             return "checkout";
         } catch (IllegalStateException e) {
-            // Handle empty cart case
             return "redirect:/cart?error=empty";
         }
     }
@@ -72,8 +71,6 @@ public class OrderController {
     public String orderDetails(@PathVariable("id") Integer orderId, Model model) {
         OrderDetails order = orderService.findOrderById(orderId);
         UserData currentUser = getCurrentUser();
-
-        // Security check: ensure the user is viewing their own order
         if (!order.getUserData().getEmail().equals(currentUser.getEmail())) {
             return "redirect:/orders?error=access_denied";
         }

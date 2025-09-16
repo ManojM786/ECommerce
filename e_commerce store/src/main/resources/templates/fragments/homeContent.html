@@ -32,7 +32,9 @@
         <div class="display-products">
             <div class="product-card" th:each="product : ${entry.value}">
                 <a th:href="@{/product/{id}(id=${product.productId})}">
-                    <img th:src="@{${product.imageUrl}}" th:alt="${product.name}" style="height: 180px; object-fit: cover;">
+                    <div class="product-image-container">
+                        <img th:src="@{${product.imageUrl}}" th:alt="${product.name}">
+                    </div>
                 </a>
                 <div class="product-details">
                     <a th:href="@{/product/{id}(id=${product.productId})}" style="text-decoration: none; color: inherit;">

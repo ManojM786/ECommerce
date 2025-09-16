@@ -21,6 +21,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private ProductService productService;
+
     @Override
     public OrderDetails createOrderFromCart(UserData user) {
         List<Cart> cartItems = cartService.getCartItems(user);
@@ -59,6 +62,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void processPaymentAndFinalizeOrder(Integer orderId) {
         OrderDetails order = findOrderById(orderId);
+
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            int newStockQuantity = product.getStockQuantity() - item.getQuantity();
+            if (newStockQuantity < 0) {
+                throw new IllegalStateException("Insufficient stock for product: " + product.getName());
+            }
+            product.setStockQuantity(newStockQuantity);
+            productService.saveProduct(product);
+        }
 
         PaymentData payment = new PaymentData();
         payment.setOrderDetails(order);

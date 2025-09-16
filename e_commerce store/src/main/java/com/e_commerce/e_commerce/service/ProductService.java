@@ -12,4 +12,5 @@ public interface ProductService {
     void deleteProduct(Long id);
 
     Map<String, List<Product>> findTopProductsForHomepage();
+    List<Product> searchProducts(String query);
 }

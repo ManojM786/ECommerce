@@ -23,19 +23,26 @@ public class CartServiceImpl implements CartService {
     private ProductRepository productRepository;
 
     @Override
-    public void addToCart(UserData user, Long productId, int quantity) {
+    public String addToCart(UserData user, Long productId, int quantity) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
         Optional<Cart> cartItemOptional = cartRepository.findByUserAndProduct(user, product);
+        int currentCartQuantity = cartItemOptional.map(Cart::getQuantity).orElse(0);
+        int availableStock = product.getStockQuantity();
+
+        if (currentCartQuantity + quantity > availableStock) {
+            return "Requested quantity exceeds available stock for product: " + product.getName();
+        }
 
         if (cartItemOptional.isPresent()) {
             Cart cartItem = cartItemOptional.get();
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItem.setQuantity(currentCartQuantity + quantity);
         } else {
             Cart newCartItem = new Cart(null, user, product, quantity);
             cartRepository.save(newCartItem);
         }
+        return "Product added to cart successfully.";
     }
 
     @Override
@@ -54,15 +61,23 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateItemQuantity(Integer cartId, int quantity) {
+    public String updateItemQuantity(Integer cartId, int quantity) {
         Cart cartItem = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found with id: " + cartId));
+        Product product = cartItem.getProduct();
+        int availableStock = product.getStockQuantity();
+
+        if (quantity > availableStock) {
+            return "Requested quantity exceeds available stock for product: " + product.getName();
+        }
 
         if (quantity <= 0) {
             cartRepository.delete(cartItem);
+            return "Product removed from cart.";
         } else {
             cartItem.setQuantity(quantity);
             cartRepository.save(cartItem);
+            return "Cart item updated successfully.";
         }
     }
 }

@@ -23,9 +23,7 @@ public class UserManagementService {
     public void loginUser(String email, String password) {
         UserData user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         if (passwordEncoder.matches(password, user.getPassWord())) {
-
         } else {
             throw new RuntimeException("Invalid credentials");
         }

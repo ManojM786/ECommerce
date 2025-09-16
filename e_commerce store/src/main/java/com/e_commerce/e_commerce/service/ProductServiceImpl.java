@@ -18,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+    private static final String UPLOAD_DIR = "uploads/";
 
     @Override
     public List<Product> getAllProducts() {
@@ -39,25 +39,16 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
-
     public String saveImage(MultipartFile imageFile) throws IOException {
-
         Path uploadPath = Paths.get(UPLOAD_DIR);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
-
-
         String originalFilename = imageFile.getOriginalFilename();
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
-
-
         Path filePath = uploadPath.resolve(uniqueFilename);
-
-
         Files.copy(imageFile.getInputStream(), filePath);
-
         return "/uploads/" + uniqueFilename;
     }
 
@@ -66,12 +57,16 @@ public class ProductServiceImpl implements ProductService {
         List<String> categories = Arrays.asList("Electronics", "Fashion", "Home & Kitchen");
         Map<String, List<Product>> productsByCategory = new LinkedHashMap<>();
         for (String categoryName : categories) {
-            // This requires the new method in ProductRepository
             List<Product> products = productRepository.findTop5ByCategory_NameOrderByProductIdDesc(categoryName);
             if (!products.isEmpty()) {
                 productsByCategory.put(categoryName, products);
             }
         }
         return productsByCategory;
+    }
+
+    @Override
+    public List<Product> searchProducts(String query) {
+        return productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
     }
 }

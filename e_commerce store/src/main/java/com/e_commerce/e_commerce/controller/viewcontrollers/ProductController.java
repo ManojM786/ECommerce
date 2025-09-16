@@ -18,19 +18,15 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/admin/products")
 public class ProductController {
-
     @Autowired
     private ProductService productService;
-
     @Autowired
     private CategoryService categoryService;
-
     @GetMapping
     public String listProducts(Model model) {
         model.addAttribute("products", productService.getAllProducts());
         return "product";
     }
-
     @GetMapping("/add")
     public String showAddForm(Model model){
         model.addAttribute("product", new Product());
@@ -38,21 +34,16 @@ public class ProductController {
         model.addAttribute("categories", categories);
         return "product-form";
     }
-
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute Product product, @RequestParam("imageFile") MultipartFile imageFile) {
         try {
-
             if (!imageFile.isEmpty()) {
-
                 String imagePath = ((ProductServiceImpl) productService).saveImage(imageFile);
                 product.setImageUrl(imagePath);
             }
             productService.saveProduct(product);
         } catch (IOException e) {
-
             e.printStackTrace();
-
         }
         return "redirect:/admin/products";
     }

@@ -16,6 +16,10 @@
     <div class="container my-5 custom-container">
         <h2 class="text-center mb-4" style="font-weight:700; letter-spacing:1px;">Shopping Cart</h2>
 
+        <div th:if="${cartMessage}" class="alert alert-info text-center" style="margin-bottom: 1em;">
+            <span th:text="${cartMessage}"></span>
+        </div>
+
         <div th:if="${#lists.isEmpty(cartItems)}" class="text-center py-5">
             <h3>Your cart is empty.</h3>
             <a th:href="@{/}" class="btn btn-primary mt-3">Continue Shopping</a>
