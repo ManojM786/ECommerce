@@ -1,13 +1,8 @@
 package com.e_commerce.e_commerce.controller;
 
 import com.e_commerce.e_commerce.model.Cart;
-import com.e_commerce.e_commerce.model.UserData;
-import com.e_commerce.e_commerce.repository.UserManagementDAO;
 import com.e_commerce.e_commerce.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,39 +18,27 @@ import java.util.List;
 public class CartController {
     @Autowired
     private CartService cartService;
-    @Autowired
-    private UserManagementDAO userManagementDAO;
-    private UserData getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
-        return userManagementDAO.findByEmail(currentUserName)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserName));
-    }
+
+
 
     @GetMapping
     public String viewCart(Model model) {
-        UserData user = getCurrentUser();
-        List<Cart> cartItems = cartService.getCartItems(user);
+        List<Cart> cartItems = cartService.getCartItems();
 
         double subtotal = cartItems.stream()
-                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .mapToDouble(item -> item.getQuantity()*item.getProduct().getPrice())
                 .sum();
-        double shipping = subtotal < 50 ? 10 : 0.0;
-        double total = subtotal + shipping;
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("subtotal", subtotal);
-        model.addAttribute("shipping", shipping);
-        model.addAttribute("total", total);
 
         return "cart";
     }
 
     @PostMapping("/add")
     public String addToCart(@RequestParam("productId") Long productId,
-                            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                             RedirectAttributes redirectAttributes) {
-        String message = cartService.addToCart(getCurrentUser(), productId, quantity);
+        String message = cartService.addToCart(productId, 1);
         redirectAttributes.addFlashAttribute("cartMessage", message);
         return "redirect:/cart";
     }

@@ -11,7 +11,6 @@ public class LoginDTO {
     @NotBlank(message = "Password is required")
     private String password;
 
-    // Getters and setters
     public String getEmail() {
         return email;
     }
@@ -25,4 +24,3 @@ public class LoginDTO {
         this.password = password;
     }
 }
-

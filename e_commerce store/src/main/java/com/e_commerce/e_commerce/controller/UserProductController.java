@@ -24,9 +24,10 @@ public class UserProductController {
 
     @GetMapping("/search")
     public String searchProducts(@RequestParam("query") String query, Model model) {
-        List<Product> products = productService.searchProducts(query);
+        String trimmedQuery = query == null ? "" : query.trim();
+        List<Product> products = productService.searchProducts(trimmedQuery);
         model.addAttribute("products", products);
-        model.addAttribute("searchQuery", query);
+        model.addAttribute("searchQuery", trimmedQuery);
         return "productsList";
     }
 

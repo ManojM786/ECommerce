@@ -23,20 +23,10 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private UserManagementDAO userManagementDAO;
-
-    private UserData getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
-        return userManagementDAO.findByEmail(currentUserName)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserName));
-    }
-
     @GetMapping("/checkout")
     public String checkout(Model model) {
         try {
-            OrderDetails order = orderService.createOrderFromCart(getCurrentUser());
+            OrderDetails order = orderService.createOrderFromCart();
             double shipping = order.getTotalAmount() < 50 ? 10.0 : 0.0;
             model.addAttribute("order", order);
             model.addAttribute("shipping", shipping);
@@ -53,7 +43,6 @@ public class OrderController {
             orderService.processPaymentAndFinalizeOrder(orderId);
             return "redirect:/order/confirmation?orderId=" + orderId;
         } catch (IllegalStateException e) {
-            // Payment not successful or other error
             model.addAttribute("errorMessage", e.getMessage());
             OrderDetails order = orderService.findOrderById(orderId);
             model.addAttribute("order", order);
@@ -70,7 +59,7 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String myOrders(Model model) {
-        List<OrderDetails> orders = orderService.findOrdersByUser(getCurrentUser());
+        List<OrderDetails> orders = orderService.findOrdersByUser();
         model.addAttribute("orders", orders);
         return "my-orders";
     }
@@ -78,11 +67,6 @@ public class OrderController {
     @GetMapping("/orders/{id}")
     public String orderDetails(@PathVariable("id") Integer orderId, Model model) {
         OrderDetails order = orderService.findOrderById(orderId);
-        UserData currentUser = getCurrentUser();
-        if (!order.getUserData().getEmail().equals(currentUser.getEmail())) {
-            return "redirect:/orders?error=access_denied";
-        }
-
         model.addAttribute("order", order);
         return "order-detail-view";
     }

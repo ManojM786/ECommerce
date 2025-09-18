@@ -21,7 +21,6 @@ public class PaymentController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // Mock payment processing
     @PostMapping("/process")
     public String processPayment(@RequestParam int orderId, @RequestParam double amount, @RequestParam(required = false) String status, Model model) {
         Optional<OrderDetails> orderOpt = orderRepository.findById(orderId);
@@ -42,7 +41,8 @@ public class PaymentController {
         payment.setPaymentStatus(paymentStatus);
         payment.setPaymentDate(new Date());
         paymentRepository.save(payment);
-        model.addAttribute("message", "Payment processed. Payment ID: " + payment.getPaymentId() + ", Status: " + payment.getPaymentStatus());
+        model.addAttribute("payment", payment);
+        model.addAttribute("message", "Payment processed. Payment ID: " + payment.getPaymentRefId() + ", Status: " + payment.getPaymentStatus());
         return "payment-status";
     }
 
@@ -62,7 +62,8 @@ public class PaymentController {
             return "payment-status";
         }
         PaymentData payment = paymentOpt.get();
-        model.addAttribute("message", "Payment Status: SUCCESS. Payment ID: " + payment.getPaymentId());
+        model.addAttribute("payment", payment);
+        model.addAttribute("message", "Payment Status: "+payment.getPaymentStatus());
         return "payment-status";
     }
 }

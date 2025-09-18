@@ -40,7 +40,6 @@ public class UserController {
         UserData user = getCurrentUser();
         user.setUserName(formUser.getUserName());
         user.setEmail(formUser.getEmail());
-        // Only encode and update password if changed
         if (formUser.getPassWord() != null && !formUser.getPassWord().isBlank()) {
             user.setPassWord(passwordEncoder.encode(formUser.getPassWord()));
         }

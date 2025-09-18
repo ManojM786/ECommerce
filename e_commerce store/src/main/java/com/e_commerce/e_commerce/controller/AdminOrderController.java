@@ -29,6 +29,7 @@ public class AdminOrderController {
         OrderDetails order = orderService.findOrderById(orderId);
         model.addAttribute("order", order);
         model.addAttribute("allStatuses", OrderStatus.values());
+        model.addAttribute("payment", orderService.findPaymentByOrder(order));
         return "admin-order-detail";
     }
 

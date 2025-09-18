@@ -43,9 +43,9 @@
                                         <a th:href="@{/product/{id}(id=${item.product.productId})}" th:text="${item.product.name}"></a>
                                     </div>
                                 </td>
-                                <td th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}"></td>
+                                <td th:text="'₹' + ${#numbers.formatDecimal(item.price, 1, 2)}"></td>
                                 <td th:text="${item.quantity}"></td>
-                                <td th:text="'$' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></td>
+                                <td th:text="'₹' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -80,19 +80,15 @@
                                     order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' :
                                     order.orderStatus.name() == 'PROCESS' || order.orderStatus.name() == 'SHIPPED' ? 'bg-primary' :
                                     'bg-secondary'}" th:text="${order.orderStatus}"></span></p>
-                                <hr>
-                                <div class="d-flex justify-content-between">
-                                    <span>Subtotal:</span>
-                                    <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Shipping:</span>
-                                    <span>$50.00</span>
-                                </div>
+                                <p>
+                                  <strong>Payment Reference:</strong>
+                                  <span th:if="${payment != null}" th:text="${payment.paymentRefId}"></span>
+                                  <span th:if="${payment == null}">No payment found</span>
+                                </p>
                                 <hr>
                                 <div class="d-flex justify-content-between fw-bold fs-5">
                                     <span>Total:</span>
-                                    <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount + 50.0, 1, 2)}"></span>
+                                    <span th:text="'₹' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
                                 </div>
                             </div>
                         </div>

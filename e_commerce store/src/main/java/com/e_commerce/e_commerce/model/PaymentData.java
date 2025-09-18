@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Scope("prototype")
@@ -35,15 +36,17 @@ public class PaymentData {
     @Temporal(TemporalType.DATE)
     private Date paymentDate;
 
+    @Column(name = "payment_ref_id", unique = true, nullable = false, length = 12)
+    private String paymentRefId;
+
     @PrePersist
-    protected void onCreate() {
-        if (paymentDate == null) {
-            paymentDate = new Date();
-        }
-        if(paymentStatus == null){
-            paymentStatus = PaymentStatus.PENDING;
+    public void generatePaymentRefId() {
+        if (this.paymentRefId == null || this.paymentRefId.isEmpty()) {
+            this.paymentRefId = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12).toUpperCase();
         }
     }
+
+
 
     public int getPaymentId() {
         return paymentId;
@@ -83,5 +86,12 @@ public class PaymentData {
 
     public void setPaymentDate(Date paymentDate) {
         this.paymentDate = paymentDate;
+    }
+
+    public String getPaymentRefId() {
+        return paymentRefId;
+    }
+    public void setPaymentRefId(String paymentRefId) {
+        this.paymentRefId = paymentRefId;
     }
 }

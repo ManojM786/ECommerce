@@ -51,7 +51,7 @@
                         <td th:text="${product.description}">Description</td>
                         <td th:text="${product.brand}">Brand</td>
                         <td th:text="${product.category?.name}">Category Name</td>
-                        <td th:text="'$' + ${product.price}">Price</td>
+                        <td style="white-space: nowrap;" th:text="'₹ ' + ${product.price}">Price</td>
                         <td th:text="${product.stockQuantity}">Stock</td>
                         <td>
                             <a class="btn btn-warning btn-sm me-2" th:href="@{/admin/products/edit/{id}(id=${product.productId})}">

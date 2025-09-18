@@ -1,0 +1,50 @@
+/* signin.css - White and Blue E-Commerce Theme */
+
+.login-box {
+    border: 0.5px solid #007bff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px 0 rgba(0, 123, 255, 0.10);
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+}
+.login-box h2 {
+    color: #007bff;
+    font-weight: 700;
+}
+.form-label {
+    color: #003366;
+    font-weight: 500;
+}
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.15rem rgba(0,123,255,.10);
+}
+.btn-primary {
+    background: #007bff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+}
+.btn-primary:hover {
+    background: #0056b3;
+}
+.alert-info {
+    background: #e3f0ff;
+    color: #0056b3;
+    border: none;
+}
+.alert-danger {
+    background: #ffe3e3;
+    color: #b30000;
+    border: none;
+}
+.already-account {
+    color: #003366;
+    font-size: 1em;
+}
+

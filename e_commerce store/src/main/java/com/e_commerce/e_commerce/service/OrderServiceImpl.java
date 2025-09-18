@@ -3,8 +3,11 @@ package com.e_commerce.e_commerce.service;
 import com.e_commerce.e_commerce.model.*;
 import com.e_commerce.e_commerce.repository.OrderRepository;
 import com.e_commerce.e_commerce.repository.PaymentRepository;
+import com.e_commerce.e_commerce.repository.UserManagementDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +31,20 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private UserManagementDAO userManagementDAO;
+
+    private UserData getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        return userManagementDAO.findByEmail(currentUserName)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserName));
+    }
+
     @Override
-    public OrderDetails createOrderFromCart(UserData user) {
-        List<Cart> cartItems = cartService.getCartItems(user);
+    public OrderDetails createOrderFromCart() {
+        UserData user = getCurrentUser();
+        List<Cart> cartItems = cartService.getCartItems();
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("Cannot create order from an empty cart.");
         }
@@ -54,7 +68,16 @@ public class OrderServiceImpl implements OrderService {
                 .sum();
         order.setTotalAmount(totalAmount);
 
-        return orderRepository.save(order);
+        OrderDetails savedOrder = orderRepository.save(order);
+
+        PaymentData payment = new PaymentData();
+        payment.setOrderDetails(savedOrder);
+        payment.setAmount(savedOrder.getTotalAmount());
+        payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        payment.setPaymentDate(new Date());
+        paymentRepository.save(payment);
+
+        return savedOrder;
     }
 
     @Override
@@ -66,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void processPaymentAndFinalizeOrder(Integer orderId) {
         OrderDetails order = findOrderById(orderId);
-        // If no payment exists, create a successful payment by default
+
         PaymentData payment = paymentRepository.findByOrderDetails(order).orElse(null);
         if (payment == null) {
             payment = new PaymentData();
@@ -74,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
             payment.setAmount(order.getTotalAmount());
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
             payment.setPaymentDate(new Date());
+            // Do NOT set paymentRefId here; it is generated in the entity (@PrePersist)
             paymentRepository.save(payment);
         }
         if (payment.getPaymentStatus() == null || !payment.getPaymentStatus().name().equalsIgnoreCase("COMPLETED")) {
@@ -94,13 +118,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDetails> findOrdersByUser(UserData user) {
+    public List<OrderDetails> findOrdersByUser() {
+        UserData user = getCurrentUser();
         return orderRepository.findByUserDataOrderByOrderDateDesc(user);
     }
 
     @Override
     public List<OrderDetails> findAllOrders() {
-        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderDate"));
+        return orderRepository.findAllByOrderByOrderDateDesc();
     }
 
     @Override
@@ -108,5 +133,10 @@ public class OrderServiceImpl implements OrderService {
         OrderDetails order = findOrderById(orderId);
         order.setOrderStatus(status);
         orderRepository.save(order);
+    }
+
+    @Override
+    public PaymentData findPaymentByOrder(OrderDetails order) {
+        return paymentRepository.findByOrderDetails(order).orElse(null);
     }
 }

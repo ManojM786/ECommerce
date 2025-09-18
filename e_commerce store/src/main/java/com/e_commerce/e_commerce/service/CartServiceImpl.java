@@ -5,7 +5,11 @@ import com.e_commerce.e_commerce.model.Product;
 import com.e_commerce.e_commerce.model.UserData;
 import com.e_commerce.e_commerce.repository.CartRepository;
 import com.e_commerce.e_commerce.repository.ProductRepository;
+import com.e_commerce.e_commerce.repository.UserManagementDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +26,21 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private UserManagementDAO userManagementDAO;
+
+    private UserData getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        return userManagementDAO.findByEmail(currentUserName)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserName));
+    }
+
     @Override
-    public String addToCart(UserData user, Long productId, int quantity) {
+    public String addToCart(Long productId, int quantity) {
+
+        UserData user = getCurrentUser();
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
@@ -46,7 +63,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> getCartItems(UserData user) {
+    public List<Cart> getCartItems() {
+        UserData user = getCurrentUser();
         return cartRepository.findByUser(user);
     }
 

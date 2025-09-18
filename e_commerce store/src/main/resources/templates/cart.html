@@ -26,7 +26,6 @@
         </div>
 
         <div class="row" th:if="${not #lists.isEmpty(cartItems)}">
-            <!-- Cart Items -->
             <div class="col-lg-8 mb-4 mb-lg-0">
                 <div th:each="item : ${cartItems}" class="card mb-3">
                     <div class="row g-0 align-items-center cart-item">
@@ -36,7 +35,9 @@
                         <div class="col-md-6">
                             <div class="card-body">
                                 <h5 class="card-title mb-2" th:text="${item.product.name}">Product Name</h5>
-                                <p class="card-text card-price" th:text="'$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">$99.99</p>
+                                <div class="d-flex justify-content-between">
+                                    <span th:text="'Unit: ₹' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">Unit: ₹99.99</span>
+                                </div>
                                 <div class="delivery-info mt-2">
                                     <i class="fas fa-truck"></i>
                                     <span>Estimated Delivery: <strong>3-5 days</strong></span>
@@ -45,14 +46,12 @@
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="d-flex flex-column align-items-center justify-content-center h-100 p-3">
-                                <!-- Quantity Controls -->
                                 <form method="post" class="quantity-controls">
                                     <input type="hidden" name="cartId" th:value="${item.cartId}" />
                                     <button type="submit" th:formaction="@{/cart/update}" name="quantity" th:value="${item.quantity - 1}" class="btn btn-sm btn-outline-secondary quantity-btn">-</button>
                                     <span class="quantity-display" th:text="${item.quantity}">1</span>
                                     <button type="submit" th:formaction="@{/cart/update}" name="quantity" th:value="${item.quantity + 1}" class="btn btn-sm btn-outline-secondary quantity-btn">+</button>
                                 </form>
-                                <!-- Remove Button -->
                                 <form th:action="@{/cart/remove}" method="post">
                                     <input type="hidden" name="cartId" th:value="${item.cartId}" />
                                     <button type="submit" class="btn btn-link text-danger remove-btn">
@@ -64,15 +63,19 @@
                     </div>
                 </div>
             </div>
-            <!-- Summary -->
             <div class="col-lg-4">
                 <div class="card summary-card sticky-lg-top">
                     <div class="card-body">
                         <h5 class="card-title text-center mb-4">Summary</h5>
-                        <p class="card-text d-flex justify-content-between">Subtotal: <span th:text="'$' + ${#numbers.formatDecimal(subtotal, 1, 2)}">$999.99</span></p>
-                        <p class="card-text d-flex justify-content-between">Shipping: <span th:text="'$' + ${#numbers.formatDecimal(shipping, 1, 2)}">$50.00</span></p>
+                        <div th:each="item : ${cartItems}" class="d-flex justify-content-between mb-2">
+                            <span>
+                                <span th:text="${item.product.name}"></span>
+                                <span class="text-muted" th:text="' x' + ${item.quantity}"></span>
+                            </span>
+                            <span th:text="'₹' + ${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}"></span>
+                        </div>
                         <hr>
-                        <h5 class="d-flex justify-content-between">Total: <span th:text="'$' + ${#numbers.formatDecimal(total, 1, 2)}">$1049.99</span></h5>
+                        <h5 class="d-flex justify-content-between">Total: <span th:text="'₹' + ${#numbers.formatDecimal(subtotal, 1, 2)}">₹999.99</span></h5>
                         <a th:href="@{/checkout}" class="btn btn-primary w-100 mt-3 py-2" style="font-size:1.1rem; font-weight:600;">Checkout</a>
                     </div>
                 </div>

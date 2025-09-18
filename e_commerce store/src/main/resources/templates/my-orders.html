@@ -49,14 +49,17 @@
                                             <img th:src="@{${item.product.imageUrl}}" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover; margin-right: 15px;">
                                             <span th:text="${item.product.name} + ' (x' + ${item.quantity} + ')'"></span>
                                         </div>
-                                        <span th:text="'$' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+                                        <span th:text="'₹' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4">
                                 <h5>Order Summary</h5>
-                                <p><strong>Total Amount:</strong> <span th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></p>
-                                <a th:href="@{/orders/{id}(id=${order.orderId})}" class="btn btn-sm btn-outline-primary">View Full Details</a>
+                                <div class="d-flex justify-content-between">
+                                    <span>Total:</span>
+                                    <span th:text="'₹' + ${#numbers.formatDecimal(order.totalAmount >= 100 ? order.totalAmount : order.totalAmount + 50, 1, 2)}"></span>
+                                </div>
+                                <a th:href="@{/orders/{id}(id=${order.orderId})}" class="btn btn-sm btn-outline-primary mt-2">View Full Details</a>
                             </div>
                         </div>
                     </div>

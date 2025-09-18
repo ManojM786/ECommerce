@@ -16,19 +16,11 @@ public class UserManagementService {
 
     public void registerUser(UserData user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("User already exists with this email");
+            throw new IllegalArgumentException("User already exists with this email");
         }
         String encodedPassword = passwordEncoder.encode(user.getPassWord());
         user.setPassWord(encodedPassword);
         userRepository.save(user);
     }
 
-    public void loginUser(String email, String password) {
-        UserData user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (passwordEncoder.matches(password, user.getPassWord())) {
-        } else {
-            throw new RuntimeException("Invalid credentials");
-        }
-    }
 }

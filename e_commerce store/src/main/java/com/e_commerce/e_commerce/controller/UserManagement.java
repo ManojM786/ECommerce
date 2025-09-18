@@ -12,18 +12,13 @@ import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import com.e_commerce.e_commerce.model.Role;
 import com.e_commerce.e_commerce.model.LoginDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
-import com.e_commerce.e_commerce.service.UserAlreadyExistsException;
 
 @Controller
 public class UserManagement {
 
     @Autowired
     private UserManagementService userService;
-
-    private static final Logger logger = LoggerFactory.getLogger(UserManagement.class);
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -35,7 +30,6 @@ public class UserManagement {
 
     @GetMapping("/signup")
     public String signup(Model model) {
-        logger.info("/signup endpoint accessed");
         if (!model.containsAttribute("userData")) {
             model.addAttribute("userData", new UserData());
         }
@@ -49,16 +43,14 @@ public class UserManagement {
         if (bindingResult.hasErrors()) {
             return mav;
         }
-
         try {
             userData.setUserRole(Role.CUSTOMER);
             userService.registerUser(userData);
             mav.setViewName("redirect:/login");
-        } catch (UserAlreadyExistsException e) {
-            mav.addObject("message", "User already exists with this email");
+        } catch (IllegalArgumentException e) {
+            mav.addObject("message", e.getMessage());
             mav.addObject("userData", userData);
         } catch (Exception e) {
-            logger.error("Signup failed for user: " + userData.getEmail(), e);
             mav.addObject("message", "Signup failed: " + e.getMessage());
         }
         return mav;

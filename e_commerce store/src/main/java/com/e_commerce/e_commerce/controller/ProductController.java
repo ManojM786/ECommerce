@@ -47,6 +47,9 @@ public class ProductController {
             if (!imageFile.isEmpty()) {
                 String imagePath = ((ProductServiceImpl) productService).saveImage(imageFile);
                 product.setImageUrl(imagePath);
+            } else if (product.getProductId() != null) {
+                Optional<Product> existingProduct = productService.getProductById(product.getProductId());
+                existingProduct.ifPresent(existing -> product.setImageUrl(existing.getImageUrl()));
             }
             productService.saveProduct(product);
         } catch (IOException e) {

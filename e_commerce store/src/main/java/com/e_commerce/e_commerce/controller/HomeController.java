@@ -1,6 +1,7 @@
 package com.e_commerce.e_commerce.controller;
 
 import com.e_commerce.e_commerce.model.Product;
+import com.e_commerce.e_commerce.model.UserData;
 import com.e_commerce.e_commerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

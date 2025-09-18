@@ -80,7 +80,7 @@
                 <h1 class="product-title" th:text="${product.name}">Product Name</h1>
                 <p class="product-brand">Brand: <span th:text="${product.brand}">Brand Name</span></p>
                 <p class="product-category">Category: <span th:text="${product.category?.name}">Category Name</span></p>
-                <div class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$99.99</div>
+                <div class="product-price" th:text="'₹ ' + ${#numbers.formatDecimal(product.price, 1, 2)}">₹99.99</div>
 
                 <div class="stock-info">
                     <span th:if="${product.stockQuantity > 0}" class="in-stock"><i class="fas fa-check-circle"></i> In Stock (<span th:text="${product.stockQuantity}"></span> available)</span>

@@ -40,7 +40,7 @@
                         <td th:text="${order.orderId}">#123</td>
                         <td th:text="${order.userData.userName}">John Doe</td>
                         <td th:text="${#dates.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}">01-Jan-2024</td>
-                        <td th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$99.99</td>
+                        <td th:text="'₹' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">₹99.99</td>
                         <td>
                             <span class="badge" th:classappend="${
                                 order.orderStatus.name() == 'DELIVERED' ? 'bg-success' :
